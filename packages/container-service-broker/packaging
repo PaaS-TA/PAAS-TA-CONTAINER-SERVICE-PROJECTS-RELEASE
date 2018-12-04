@@ -1,0 +1,9 @@
+set -e
+
+JAR_DIR_NAME=container-service-broker
+JAR_NAME=paas-ta-caas-broker
+
+cp $JAR_DIR_NAME/$JAR_NAME.jar ${BOSH_INSTALL_TARGET}
+cp $JAR_DIR_NAME/bosh ${BOSH_INSTALL_TARGET}
+cp $JAR_DIR_NAME/credhub ${BOSH_INSTALL_TARGET}
+cp $JAR_DIR_NAME/kubectl ${BOSH_INSTALL_TARGET}

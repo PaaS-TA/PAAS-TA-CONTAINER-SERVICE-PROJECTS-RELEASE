@@ -1,0 +1,6 @@
+set -e
+
+JAR_DIR_NAME=container-service-dashboard
+JAR_NAME=paas-ta-caas-dashboard
+
+cp $JAR_DIR_NAME/$JAR_NAME.war ${BOSH_INSTALL_TARGET}

@@ -1,0 +1,139 @@
+---
+name: container-service-broker
+
+templates:
+  bin/service_ctl.erb: bin/service_ctl
+  bin/monit_debugger: bin/monit_debugger
+  data/application.yml.erb: data/application.yml
+  data/properties.sh: data/properties.sh
+  helpers/ctl_setup.sh: helpers/ctl_setup.sh
+  helpers/ctl_utils.sh: helpers/ctl_utils.sh
+  script/set_caas_service_info.sh.erb: script/set_caas_service_info.sh
+
+packages:
+  - java
+  - container-service-broker
+
+provides:
+ - name: caas-service-broker-link
+   type: caas-service-broker
+   properties: 
+   - server.port
+   - caas.api_server_url
+
+consumes:
+  - name: caas-haproxy-link
+    type: caas-haproxy
+  - name: caas-mariadb-link
+    type: caas-mariadb
+  - name: caas-common-api-link
+    type: caas-common-api
+
+properties:
+  credhub.server_url:
+    description: 'credhub server url'
+  credhub.admin_client_secret:
+    description: 'credhub admin client secret'
+  caas.cluster_name:
+    description: 'bosh director name and bosh deployment name'
+  caas.api_server_url:
+    description: 'master api server url'
+  caas.service_broker_auth_secret:
+    description: 'service broker auth secret'
+  caas.exit_code:
+    description: 'sh command to exit'
+  caas.init_command:
+    description: 'init script path'
+  datasource.driver_class_name:
+    description: 'driver class name for broker DB'
+  datasource.username:
+    description: 'username to access broker DB'
+  datasource.password:
+    description: 'password to access broker DB'
+  jpa.hibernate_ddl_auto:
+    description: 'hibernate ddl auto'
+  jpa.show_sql:
+    description: 'show sql y/n'
+  jpa.database_platform:
+    description: 'database platform name'
+  freemarker.template-loader-path:
+    description: 'freemarker'
+  server.port:
+    description: 'server port'
+    default: 8888
+  logging.level.org.openpaas.servicebroker:
+    description: 'broker log level'
+  dashboard.url:
+    description: 'url to access caas-dashboard'
+  auth.id:
+    description: 'auth id'
+  auth.password:
+    description: 'auth password'
+  serviceDefinition.id:
+    description: 'service broker id'
+    default: af86588c-6212-11e7-907b-b6006ad3dps0
+  serviceDefinition.name:
+    description: 'service broker name'
+  serviceDefinition.desc:
+    description: 'service broker default description'
+  serviceDefinition.tags:
+    description: 'service broker tags'
+  serviceDefinition.image_url:
+    description: 'service broker image url'
+  serviceDefinition.bindable:
+    description: 'service broker bindability'
+    default: false
+  serviceDefinition.planupdatable:
+    description: 'service broker plan updateability'
+    default: false
+  serviceDefinition.plan1.id:
+    description: 'service broker plan1 id'
+  serviceDefinition.plan1.name:
+    description: 'service broker plan1 name'
+  serviceDefinition.plan1.desc:
+    description: 'service broker plan1 description'
+  serviceDefinition.plan1.type:
+    description: 'service broker plan1 type'
+  serviceDefinition.plan1.cpu:
+    description: 'service broker plan1 cpu size'
+  serviceDefinition.plan1.memory:
+    description: 'service broker plan1 memory size'
+  serviceDefinition.plan1.disk:
+    description: 'service broker plan1 disk size'
+  serviceDefinition.plan1.weight:
+    description: 'service broker plan1 weight'
+  serviceDefinition.plan2.id:
+    description: 'service broker plan2 id'
+  serviceDefinition.plan2.name:
+    description: 'service broker plan2 name'
+  serviceDefinition.plan2.desc:
+    description: 'service broker plan2 description'
+  serviceDefinition.plan2.type:
+    description: 'service broker plan2 type'
+  serviceDefinition.plan2.cpu:
+    description: 'service broker plan2 cpu size'
+  serviceDefinition.plan2.memory:
+    description: 'service broker plan2 memory size'
+  serviceDefinition.plan2.disk:
+    description: 'service broker plan2 disk size'
+  serviceDefinition.plan2.weight:
+    description: 'service broker plan2 weight'
+  serviceDefinition.plan3.id:
+    description: 'service broker plan3 id'
+  serviceDefinition.plan3.name:
+    description: 'service broker plan3 name'
+  serviceDefinition.plan3.desc:
+    description: 'service broker plan3 description'
+  serviceDefinition.plan3.type:
+    description: 'service broker plan3 type'
+  serviceDefinition.plan3.cpu:
+    description: 'service broker plan3 cpu size'
+  serviceDefinition.plan3.memory:
+    description: 'service broker plan3 memory size'
+  serviceDefinition.plan3.disk:
+    description: 'service broker plan3 disk size'
+  serviceDefinition.plan3.weight:
+    description: 'service broker plan3 weight'
+  java_opts:
+    description: 'java option memory setting'
+    default: '-XX:MaxMetaspaceSize=104857K -Xss349K -Xms681574K -XX:MetaspaceSize=104857K -Xmx681574K'

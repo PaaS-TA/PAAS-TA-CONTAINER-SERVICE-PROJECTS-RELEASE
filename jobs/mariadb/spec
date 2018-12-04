@@ -1,0 +1,46 @@
+---
+name: mariadb
+templates:
+  bin/mariadb_ctl.erb: bin/mariadb_ctl
+  bin/pre-start: bin/pre-start
+  bin/post-start: bin/post-start
+  conf/init.sql: conf/init.sql
+  conf/mariadb.cnf: conf/mariadb.cnf
+
+packages:
+  - mariadb
+
+provides:
+- name: caas-mariadb-link
+  type: caas-mariadb
+  properties:
+  - port
+  - admin_user.id
+  - admin_user.password
+  - role_set.administrator_code_name
+  - role_set.administrator_code
+  - role_set.regular_user_code_name
+  - role_set.regular_user_code
+  - role_set.init_user_code_name
+  - role_set.init_user_code
+
+properties:
+  port:
+    description: 'MariaDB server port'
+    default: '3306'
+  admin_user.id:
+    description: 'MariaDB admin user id'
+  admin_user.password:
+    description: 'MariaDB admin user password'
+  role_set.administrator_code_name:
+    description: 'Administrator role set code name'
+  role_set.administrator_code:
+    description: 'Administrator role set code'
+  role_set.regular_user_code_name:
+    description: 'Regular user role set code name'
+  role_set.regular_user_code:
+    description: 'Regular user role set code'
+  role_set.init_user_code_name:
+    description: 'Init user role set code name'
+  role_set.init_user_code:
+    description: 'Init user role set code'

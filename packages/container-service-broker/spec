@@ -1,0 +1,10 @@
+---
+name: container-service-broker
+
+dependencies: []
+
+files:
+- container-service-broker/paas-ta-caas-broker.jar
+- container-service-broker/bosh
+- container-service-broker/credhub
+- container-service-broker/kubectl

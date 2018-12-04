@@ -1,0 +1,7 @@
+---
+name: container-service-api
+
+dependencies: []
+
+files:
+- container-service-api/paas-ta-caas-api.jar

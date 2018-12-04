@@ -1,0 +1,79 @@
+server:
+  port: <%= p('server.port')%>
+
+spring:
+  application:
+    name: caas-service-broker
+  datasource:
+    driver-class-name: <%= p('datasource.driver_class_name')%>
+    url: jdbc:mysql://<%= link('caas-haproxy-link').p('public_ip') %>:<%= link('caas-mariadb-link').p('port') %>/broker?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Seoul&useLegacyDatetimeCode=false
+    username: "<%= p('datasource.username')%>"
+    password: "<%= p('datasource.password')%>"
+  jpa:
+    hibernate.ddl-auto: <%= p('jpa.hibernate_ddl_auto')%>
+    show-sql: <%= p('jpa.show_sql')%>
+    database-platform: <%= p('jpa.database_platform')%>
+  freemarker:
+    template-loader-path: <%= p('freemarker.template-loader-path')%>
+
+caas:
+  url: <%= p('caas.api_server_url')%>
+  cluster:
+    command: <%= p('caas.init_command')%>
+    exit-code: <%= p('caas.exit_code')%>
+  common:
+    url: http://<%= link('caas-haproxy-link').p('public_ip') %>:<%= link('caas-common-api-link').p('server.port') %>
+    id: <%= link('caas-common-api-link').p('authorization.id')%>
+    password: <%= link('caas-common-api-link').p('authorization.password')%>
+roleSet:
+  administratorCode: <%= link('caas-mariadb-link').p('role_set.administrator_code') %>
+logging:
+  config: classpath:logback.xml
+  level:
+    org:
+      openpaas:
+        servicebroker: <%= p('logging.level.org.openpaas.servicebroker')%>
+
+serviceDefinition:
+  bindable: <%= p('serviceDefinition.bindable')%>
+  desc: "<%= p('serviceDefinition.desc')%>"
+  id: <%= p('serviceDefinition.id')%>
+  name: <%= p('serviceDefinition.name')%>
+  plan1:
+    desc: "<%= p('serviceDefinition.plan1.desc')%>"
+    id: <%= p('serviceDefinition.plan1.id')%>
+    name: <%= p('serviceDefinition.plan1.name')%>
+    type: <%= p('serviceDefinition.plan1.type')%>
+    cpu : <%= p('serviceDefinition.plan1.cpu')%>
+    memory : <%= p('serviceDefinition.plan1.memory')%>
+    disk : <%= p('serviceDefinition.plan1.disk')%>
+    weight: <%= p('serviceDefinition.plan1.weight')%>
+  plan2:
+    desc: "<%= p('serviceDefinition.plan2.desc')%>"
+    id: <%= p('serviceDefinition.plan2.id')%>
+    name: <%= p('serviceDefinition.plan2.name')%>
+    type: <%= p('serviceDefinition.plan2.type')%>
+    cpu : <%= p('serviceDefinition.plan2.cpu')%>
+    memory : <%= p('serviceDefinition.plan2.memory')%>
+    disk : <%= p('serviceDefinition.plan2.disk')%>
+    weight: <%= p('serviceDefinition.plan2.weight')%>
+  plan3:
+    desc: "<%= p('serviceDefinition.plan3.desc')%>"
+    id: <%= p('serviceDefinition.plan3.id')%>
+    name: <%= p('serviceDefinition.plan3.name')%>
+    type: <%= p('serviceDefinition.plan3.type')%>
+    cpu : <%= p('serviceDefinition.plan3.cpu')%>
+    memory : <%= p('serviceDefinition.plan3.memory')%>
+    disk : <%= p('serviceDefinition.plan3.disk')%>
+    weight: <%= p('serviceDefinition.plan3.weight')%>
+  planupdatable: "<%= p('serviceDefinition.planupdatable')%>"
+  tags: "<%= p('serviceDefinition.tags')%>"
+  image_url: "<%= p('serviceDefinition.image_url')%>"
+
+dashboard:
+  url: "<%= p('dashboard.url')%>"
+
+auth:
+  id: "<%= p('auth.id')%>"
+  password: "<%= p('auth.password')%>"
+

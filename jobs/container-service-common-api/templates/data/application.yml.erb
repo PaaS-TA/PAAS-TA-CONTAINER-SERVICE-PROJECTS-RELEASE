@@ -1,0 +1,43 @@
+server:
+  port: <%= p('server.port')%>
+  error:
+    whitelabel:
+      enabled: false
+
+spring:
+  application:
+    name: caas-common-api
+  security:
+    username: <%= p('authorization.id')%>
+    password: <%= p('authorization.password')%>
+  datasource:
+    url: jdbc:mysql://<%= link('caas-haproxy-link').p('public_ip') %>:<%= link('caas-mariadb-link').p('port') %>/caas?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Seoul&useLegacyDatetimeCode=false
+    username: <%= p('spring.datasource.username')%>
+    password: <%= p('spring.datasource.password')%>
+    validationQuery: <%= p('spring.datasource.validationQuery')%>
+    driver_class_name: <%= p('spring.datasource.driver_class_name')%>
+  jpa:
+    database: <%= p('spring.jpa.database')%>
+    hibernate:
+      ddl-auto: <%= p('spring.jpa.hibernate.ddl-auto')%>
+      naming:
+        strategy: <%= p('spring.jpa.hibernate.naming.strategy')%>
+    generate-ddl: <%= p('spring.jpa.generate-ddl')%>
+    properties:
+      hibernate:
+        dialect: <%= p('spring.jpa.properties.hibernate.dialect')%>
+        show_sql: <%= p('spring.jpa.properties.hibernate.show_sql')%>
+        format_sql: <%= p('spring.jpa.properties.hibernate.format_sql')%>
+        use_sql_comments: <%= p('spring.jpa.properties.hibernate.use_sql_comments')%>
+
+logging:
+  level:
+    ROOT: <%= p('logging.level.ROOT')%>
+  path: <%= p('logging.path')%>
+  file: <%= p('logging.file')%>
+
+caasApi:
+  url: http://<%= link('caas-haproxy-link').p('public_ip') %>:<%= link('caas-api-link').p('server.port') %>
+  authorization:
+    id: <%= link('caas-api-link').p('authorization.id')%>
+    password: <%= link('caas-api-link').p('authorization.password')%>

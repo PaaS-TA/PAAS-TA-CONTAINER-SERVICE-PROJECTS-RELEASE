@@ -1,0 +1,64 @@
+---
+name: container-service-dashboard
+
+templates:
+  bin/service_ctl.erb: bin/service_ctl
+  bin/monit_debugger: bin/monit_debugger
+  data/properties.sh: data/properties.sh
+  data/application.yml.erb: data/application.yml
+  helpers/ctl_setup.sh: helpers/ctl_setup.sh
+  helpers/ctl_utils.sh: helpers/ctl_utils.sh
+
+packages:
+  - java
+  - container-service-dashboard
+
+provides:
+ - {name: caas-dashboard-link, type: caas-dashboard, properties: [server.port]}
+
+consumes:
+  - name: caas-haproxy-link
+    type: caas-haproxy
+  - name: caas-mariadb-link
+    type: caas-mariadb
+  - name: caas-api-link
+    type: caas-api
+  - name: caas-common-api-link
+    type: caas-common-api
+  - name: caas-service-broker-link
+    type: caas-service-broker
+
+properties:
+  server.port:
+    description: 'server port'
+    default: 8091
+  management.security.enabled:
+    description: 'management security enabled'
+  spring.freemarker.template-loader-path:
+    description: 'template loader path to use freemarker'
+  logging.level.ROOT:
+    description: 'log level root'
+  logging.path:
+    description: 'log path'
+  logging.file:
+    description: 'log file'
+  cf.uaa.oauth.info.uri:
+    description: 'cf uaa userinfo uri'
+  cf.uaa.oauth.token.check.uri:
+    description: 'cf uaa check_token uri'
+  cf.uaa.oauth.token.access.uri:
+    description: 'cf uaa oauth token uri'
+  cf.uaa.oauth.logout.url:
+    description: 'cf uaa logout url'
+  cf.uaa.oauth.authorization.uri:
+    description: 'cf uaa oauth authorization url'
+  cf.uaa.oauth.client.id:
+    description: 'client id to access cf uaa'
+  cf.uaa.oauth.client.secret:
+    description: 'client secret to access cf uaa'
+  cf.api.url:
+    description: 'cf api url'
+  java_opts:
+    description: 'java option memory setting'
+    default: '-XX:MaxMetaspaceSize=104857K -Xss349K -Xms681574K -XX:MetaspaceSize=104857K -Xmx681574K'
+

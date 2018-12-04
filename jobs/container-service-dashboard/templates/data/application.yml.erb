@@ -1,0 +1,62 @@
+server:
+  port: <%= p('server.port')%>
+
+spring:
+  application:
+    name: caas-dashboard
+  freemarker:
+    template-loader-path: <%= p('spring.freemarker.template-loader-path')%>
+
+management:
+  security:
+    enabled: <%= p('management.security.enabled')%>
+
+logging:
+  level:
+    ROOT: <%= p('logging.level.ROOT')%>
+  path: <%= p('logging.path')%>
+  file: <%= p('logging.file')%>
+
+commonApi:
+  url: http://<%= link('caas-haproxy-link').p('public_ip') %>:<%= link('caas-common-api-link').p('server.port') %>
+  authorization:
+    id: <%= link('caas-common-api-link').p('authorization.id')%>
+    password: <%= link('caas-common-api-link').p('authorization.password')%>
+
+caasApi:
+  url: http://<%= link('caas-haproxy-link').p('public_ip') %>:<%= link('caas-api-link').p('server.port') %>
+  authorization:
+    id: <%= link('caas-api-link').p('authorization.id')%>
+    password: <%= link('caas-api-link').p('authorization.password')%>
+
+caas:
+  url: <%= link('caas-service-broker-link').p('caas.api_server_url') %>
+  cluster-name: "kubernetes" # DO NOT MODIFY
+
+roleSet:
+  administratorCode: <%= link('caas-mariadb-link').p('role_set.administrator_code') %>
+  regularUserCode: <%= link('caas-mariadb-link').p('role_set.regular_user_code') %>
+  initUserCode: <%= link('caas-mariadb-link').p('role_set.init_user_code') %>
+  administratorName: <%= link('caas-mariadb-link').p('role_set.administrator_code_name') %>
+  regularUserName: <%= link('caas-mariadb-link').p('role_set.regular_user_code_name') %>
+  initUserName: <%= link('caas-mariadb-link').p('role_set.init_user_code_name') %>
+
+cf:
+  uaa:
+    oauth:
+      info:
+        uri: <%= p('cf.uaa.oauth.info.uri')%>
+      token:
+        check:
+          uri: <%= p('cf.uaa.oauth.token.check.uri')%>
+        access:
+          uri: <%= p('cf.uaa.oauth.token.access.uri')%>
+      logout:
+        url: <%= p('cf.uaa.oauth.logout.url')%>
+      authorization:
+        uri: <%= p('cf.uaa.oauth.authorization.uri')%>
+      client:
+        id: <%= p('cf.uaa.oauth.client.id')%>
+        secret: <%= p('cf.uaa.oauth.client.secret')%>
+  api:
+    url: <%= p('cf.api.url')%>

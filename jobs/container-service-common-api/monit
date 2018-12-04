@@ -1,0 +1,5 @@
+check process container-service-common-api
+  with pidfile /var/vcap/sys/run/container-service-common-api/container-service-common-api.pid
+  start program "/var/vcap/jobs/container-service-common-api/bin/monit_debugger service_ctl '/var/vcap/jobs/container-service-common-api/bin/service_ctl start'" with timeout 20 seconds
+  stop program "/var/vcap/jobs/container-service-common-api/bin/monit_debugger service_ctl '/var/vcap/jobs/container-service-common-api/bin/service_ctl stop'" with timeout 20 seconds
+  group vcap

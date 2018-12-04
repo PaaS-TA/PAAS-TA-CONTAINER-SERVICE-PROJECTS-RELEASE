@@ -1,0 +1,84 @@
+server:
+  port: <%= p('server.port')%>
+  error:
+    whitelabel:
+      enabled: false
+
+spring:
+  application:
+    name: caas-api
+  security:
+    username: <%= p('authorization.id')%>
+    password: <%= p('authorization.password')%>
+
+management:
+  security:
+    enabled: <%= p('management.security.enabled')%>
+
+logging:
+  level:
+    ROOT: <%= p('logging.level.ROOT')%>
+  path: <%= p('logging.path')%>
+  file: <%= p('logging.file')%>
+
+commonApi:
+  url: http://<%= link('caas-haproxy-link').p('public_ip') %>:<%= link('caas-common-api-link').p('server.port') %>
+  authorization:
+    id: <%= link('caas-common-api-link').p('authorization.id')%>
+    password: <%= link('caas-common-api-link').p('authorization.password')%>
+
+project:
+  name: caas-api
+  artifactId: caas-api
+  description: caas-api management service
+ 
+caasMaster:
+  api:
+    url: <%= link('caas-service-broker-link').p('caas.api_server_url') %>
+    list:
+      services:
+        list: "/api/v1/namespaces/{namespace}/services"
+        get: "/api/v1/namespaces/{namespace}/services/{name}"
+      endpoints:
+        list: "/api/v1/namespaces/{namespace}/endpoints"
+        get: "/api/v1/namespaces/{namespace}/endpoints/{name}"
+      pods:
+        list: "/api/v1/namespaces/{namespace}/pods"
+        get: "/api/v1/namespaces/{namespace}/pods/{name}"
+      nodes:
+        list: "/api/v1/nodes"
+        get: "/api/v1/nodes/{name}"
+      replicaSets:
+        list: "/apis/apps/v1/namespaces/{namespace}/replicasets"
+        get: "/apis/apps/v1/namespaces/{namespace}/replicasets/{name}"
+      persistentvolumes:
+        list: "/api/v1/persistentvolumes"
+        get: "/api/v1/persistentvolumes/{name}"
+      events:
+        list: "/api/v1/namespaces/{namespace}/events"
+      roles:
+        list: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles"
+        get: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles/{name}"
+        create: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles"
+        delete: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles/{name}"
+        update: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles/{name}"
+      deployments:
+        list: "/apis/apps/v1/namespaces/{namespace}/deployments"
+        get: "/apis/apps/v1/namespaces/{namespace}/deployments/{name}"
+      roleBindings:
+        list: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings"
+        get: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings/{name}"
+        create: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings"
+        delete: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings/{name}"
+        update: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings/{name}"
+      users:
+        get: "/api/v1/namespaces/{namespace}/serviceaccounts/{name}"
+        create: "/api/v1/namespaces/{namespace}/serviceaccounts"
+        delete: "/api/v1/namespaces/{namespace}/serviceaccounts/{name}"
+      namespaces:
+        get: "/api/v1/namespaces/{namespace}"
+      resourceQuotas:
+        list: "/api/v1/namespaces/{namespace}/resourcequotas"
+      secrets:
+        get: "/api/v1/namespaces/{namespace}/secrets/{name}"
+

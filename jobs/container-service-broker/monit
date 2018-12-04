@@ -1,0 +1,5 @@
+check process container-service-broker
+  with pidfile /var/vcap/sys/run/container-service-broker/container-service-broker.pid
+  start program "/var/vcap/jobs/container-service-broker/bin/monit_debugger service_ctl '/var/vcap/jobs/container-service-broker/bin/service_ctl start'"
+  stop program "/var/vcap/jobs/container-service-broker/bin/monit_debugger service_ctl '/var/vcap/jobs/container-service-broker/bin/service_ctl stop'"
+  group vcap

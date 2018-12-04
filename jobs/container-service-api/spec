@@ -1,0 +1,49 @@
+---
+name: container-service-api
+templates:
+  bin/service_ctl.erb: bin/service_ctl
+  bin/monit_debugger: bin/monit_debugger
+  data/properties.sh: data/properties.sh
+  data/application.yml.erb: data/application.yml
+  helpers/ctl_setup.sh: helpers/ctl_setup.sh
+  helpers/ctl_utils.sh: helpers/ctl_utils.sh
+
+packages:
+  - java
+  - container-service-api
+
+provides:
+ - name: caas-api-link
+   type: caas-api
+   properties: 
+   - server.port
+   - authorization.id
+   - authorization.password
+
+consumes:
+  - name: caas-haproxy-link
+    type: caas-haproxy
+  - name: caas-common-api-link
+    type: caas-common-api
+  - name: caas-service-broker-link
+    type: caas-service-broker
+
+properties:
+  authorization.id:
+    description: 'authorization id'
+  authorization.password:
+    description: 'authorization password'
+  server.port:
+    description: 'server port'
+    default: 3333
+  management.security.enabled:
+    description: 'management security enabled'
+  logging.level.ROOT:
+    description: 'log level'
+  logging.path:
+    description: 'log path'
+  logging.file:
+    description: 'log file'
+  java_opts:
+    description: 'java option memory setting'
+    default: '-XX:MaxMetaspaceSize=104857K -Xss349K -Xms681574K -XX:MetaspaceSize=104857K -Xmx681574K'

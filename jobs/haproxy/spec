@@ -1,0 +1,34 @@
+---
+name: haproxy
+templates:
+  bin/haproxy_ctl.erb: bin/haproxy_ctl
+  bin/monit_debugger: bin/monit_debugger
+  config/haproxy/haproxy.cfg.erb: config/haproxy/haproxy.cfg
+  data/properties.sh.erb: data/properties.sh
+  helper/ctl_utils.sh: helper/ctl_utils.sh
+  helper/ctl_setup.sh: helper/ctl_setup.sh
+
+packages:
+  - java
+  - haproxy
+
+provides:
+ - {name: caas-haproxy-link, type: caas-haproxy, properties: [public_ip]}
+
+consumes:
+  - name: caas-mariadb-link
+    type: caas-mariadb
+  - name: caas-api-link
+    type: caas-api
+  - name: caas-common-api-link
+    type: caas-common-api
+  - name: caas-dashboard-link
+    type: caas-dashboard
+  - name: caas-service-broker-link
+    type: caas-service-broker
+
+properties:
+  pubic_ip:
+    description: 'Haproxy public ip'
+  http_port:
+    description: 'Haproxy http port'

@@ -1,0 +1,72 @@
+---
+name: container-service-common-api
+templates:
+  bin/service_ctl.erb: bin/service_ctl
+  bin/monit_debugger: bin/monit_debugger
+  data/properties.sh: data/properties.sh
+  data/application.yml.erb: data/application.yml
+  helpers/ctl_setup.sh: helpers/ctl_setup.sh
+  helpers/ctl_utils.sh: helpers/ctl_utils.sh
+
+packages:
+  - java
+  - container-service-common-api
+
+provides:
+ - name: caas-common-api-link
+   type: caas-common-api
+   properties: 
+   - server.port
+   - authorization.id
+   - authorization.password
+
+consumes:
+  - name: caas-haproxy-link
+    type: caas-haproxy
+  - name: caas-api-link
+    type: caas-api
+  - name: caas-mariadb-link
+    type: caas-mariadb
+
+properties:
+  spring.datasource.driver_class_name:
+    description: 'driver class name for accessing caas db'
+  spring.datasource.username:
+    description: 'username for accessing caas db'
+  spring.datasource.password:
+    description: 'password for accessing caas db'
+  authorization.id:
+    description: 'authorization id'
+  authorization.password:
+    description: 'authorization password'
+  server.port:
+    description: 'server port'
+    default: 3334
+  spring.datasource.validationQuery:
+    description: 'validationQuery for sql query command'
+  spring.jpa.database:
+    description: 'database kinds to use jpa'
+  spring.jpa.hibernate.ddl-auto:
+    description: 'jpa ddl auto option'
+  spring.jpa.hibernate.naming.strategy:
+    description: 'jpa naming strategy'
+  spring.jpa.generate-ddl:
+    description: 'jpa generate ddl option(boolean format)'
+  spring.jpa.properties.hibernate.dialect:
+    description: 'allow hibernate to generate sql'
+  spring.jpa.properties.hibernate.show_sql:
+    description: 'show or not log for each sql query'
+  spring.jpa.properties.hibernate.format_sql:
+    description: 'display a more readable query on the console(boolean format)'
+  spring.jpa.properties.hibernate.use_sql_comments:
+    description: 'show hint what you want to do above the query statement displayed in the console'
+  logging.level.ROOT:
+    description: 'log level'
+  logging.path:
+    description: 'log path'
+  logging.file:
+    description: 'log file'
+  java_opts:
+    description: 'java option memory setting'
+    default: '-XX:MaxMetaspaceSize=104857K -Xss349K -Xms681574K -XX:MetaspaceSize=104857K -Xmx681574K'
+

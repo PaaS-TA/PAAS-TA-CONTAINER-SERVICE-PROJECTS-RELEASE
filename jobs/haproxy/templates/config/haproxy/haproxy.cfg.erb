@@ -1,0 +1,84 @@
+global
+    daemon
+    pidfile /var/vcap/sys/run/haproxy/haproxy.pid
+    maxconn 100000
+
+defaults
+    mode http
+    timeout connect 5000ms
+    timeout client 50000ms
+    timeout server 50000ms
+    stats enable
+    stats uri /haproxy-admin
+
+
+### Haproxy /admin page
+frontend http-in
+    mode http
+    bind *:<%= p('http_port')%>
+    default_backend caas_dashboard_servers
+
+
+### CaaS dashboard
+frontend http-in-caas_dashboard
+    mode http
+    bind *:<%= link('caas-dashboard-link').p('server.port') %>
+    default_backend caas_dashboard_servers
+
+backend caas_dashboard_servers
+    mode http
+<% link("caas-dashboard-link").instances.map do |instance| %>
+    server server-<%= instance.index %> <%= instance.address %>:<%= link('caas-dashboard-link').p('server.port') %>
+<% end %>
+
+
+### CaaS API
+frontend http-in-caas_api
+    mode http
+    bind *:<%= link('caas-api-link').p('server.port') %>
+    default_backend caas_api_servers
+
+backend caas_api_servers
+    mode http
+<% link("caas-api-link").instances.map do |instance| %>
+    server server-<%= instance.index %> <%= instance.address %>:<%= link('caas-api-link').p('server.port') %>
+<% end %>
+
+
+### CaaS Common API
+frontend http-in-caas_common_api
+    mode http
+    bind *:<%= link('caas-common-api-link').p('server.port') %>
+    default_backend caas_common_api_servers
+
+backend caas_common_api_servers
+    mode http
+<% link("caas-common-api-link").instances.map do |instance| %>
+    server server-<%= instance.index %> <%= instance.address %>:<%= link('caas-common-api-link').p('server.port') %>
+<% end %>
+
+
+### CaaS Service Broker
+frontend http-in-caas_service_broker
+    mode http
+    bind *:<%= link('caas-service-broker-link').p('server.port') %>
+    default_backend caas_service_broker_servers
+
+backend caas_service_broker_servers
+    mode http
+<% link("caas-service-broker-link").instances.map do |instance| %>
+    server server-<%= instance.index %> <%= instance.address %>:<%= link('caas-service-broker-link').p('server.port') %>
+<% end %>
+
+
+### MariaDB
+frontend mariadb
+    mode tcp
+    bind *:<%= link('caas-mariadb-link').p('port') %>
+    default_backend mariadb_servers
+
+backend mariadb_servers
+    mode tcp
+<% link("caas-mariadb-link").instances.map do |instance| %>
+    server server-<%= instance.index %> <%= instance.address %>:<%= link('caas-mariadb-link').p('port') %>
+<% end %>

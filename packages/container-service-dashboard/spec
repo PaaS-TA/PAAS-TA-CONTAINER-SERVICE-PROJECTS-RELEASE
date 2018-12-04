@@ -1,0 +1,7 @@
+---
+name: container-service-dashboard
+
+dependencies: []
+
+files:
+- container-service-dashboard/paas-ta-caas-dashboard.war

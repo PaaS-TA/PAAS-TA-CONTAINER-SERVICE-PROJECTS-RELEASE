@@ -1,0 +1,6 @@
+set -e
+
+JAR_DIR_NAME=container-service-common-api
+JAR_NAME=paas-ta-caas-common-api
+
+cp $JAR_DIR_NAME/$JAR_NAME.jar ${BOSH_INSTALL_TARGET}

@@ -1,0 +1,107 @@
+#!/usr/bin/env bash
+
+set -o pipefail -e +x
+
+
+## 1. SET VARIABLES
+echo "## 1. SET VARIABLES :: BEGIN"
+
+export JOB_NAME='<%= spec.name %>'
+export PKG_DIR="/var/vcap/packages/${JOB_NAME}"
+export CREDHUB_SERVER_URL='<%= p('credhub.server_url')%>'
+export CREDHUB_ADMIN_CLIENT_SECRET='<%= p('credhub.admin_client_secret')%>'
+export CAAS_CLUSTER='<%= p('caas.cluster_name')%>'
+export CAAS_APISERVER='<%= p('caas.api_server_url')%>'
+export CAAS_COMMON_API_URL="http://<%= link('caas-haproxy-link').p('public_ip') %>:<%= link('caas-common-api-link').p('server.port') %>/adminToken"
+export CAAS_COMMON_API_AUTH_ID='<%= link('caas-common-api-link').p('authorization.id')%>'
+export CAAS_COMMON_API_AUTH_PWD='<%= link('caas-common-api-link').p('authorization.password')%>'
+export CAAS_SERVICE_BROKER_API_URL="http://<%= link('caas-haproxy-link').p('public_ip') %>:<%= p('server.port') %>/tokens"
+export CAAS_SERVICE_BROKER_API_AUTH='<%= p('caas.service_broker_auth_secret')%>'
+export CAAS_EXIT_CODE='<%= p('caas.exit_code')%>'
+
+echo "## 1. SET VARIABLES :: END"
+
+
+## FUNCTIONS
+## 1. SET CREDHUB
+set_credhub() {
+echo "## SET CREDHUB :: BEGIN"
+  set +x
+  sudo ${PKG_DIR}/credhub login --client-name=credhub-admin --client-secret="${CREDHUB_ADMIN_CLIENT_SECRET}" --server="${CREDHUB_SERVER_URL}" --skip-tls-validation
+echo "## SET CREDHUB :: END"
+}
+
+
+## 2. SET KUBECONFIG
+set_kubeconfig() {
+echo "## SET KUBE CONFIG :: BEGIN"
+  set +x
+
+  cluster="${CAAS_CLUSTER}"
+  apiserver="${CAAS_APISERVER}"
+  
+  cluster_name="cfcr/${cluster}"
+  user_name="${cluster_name}/cfcr-admin"
+  context_name="${cluster_name}"
+
+  ${PKG_DIR}/bosh int <(sudo ${PKG_DIR}/credhub get -n "${cluster}/tls-kubernetes" --output-json) --path=/value/ca > tmp_ca_file
+  admin_password=$(${PKG_DIR}/bosh int <(sudo ${PKG_DIR}/credhub get -n "${cluster}/kubo-admin-password" --output-json) --path=/value)
+
+  ${PKG_DIR}/kubectl config set-cluster "${cluster_name}" --server="${apiserver}" --certificate-authority="./tmp_ca_file" --embed-certs=true
+  ${PKG_DIR}/kubectl config set-credentials "${user_name}" --token="${admin_password}"
+  ${PKG_DIR}/kubectl config set-context "${context_name}" --cluster="${cluster_name}" --user="${user_name}"
+  ${PKG_DIR}/kubectl config use-context "${context_name}"
+
+  sudo rm -rf tmp_ca_file
+echo "## SET KUBECONFIG :: END"
+}
+
+
+## 3. SET TOKEN
+set_token() {
+echo "## SET TOKEN :: BEGIN"
+  set +x
+  CAAS_USER_TOKEN=`${PKG_DIR}/bosh int ~/.kube/config --path /users/0/user/token`
+echo "## SET TOKEN :: END"
+}
+
+
+## 4. SET DB
+set_db() {
+echo "## SET DB :: BEGIN"
+  set +x
+
+## SET SERVICE BROKER DB
+echo "## SET SERVICE BROKER DB :: BEGIN"
+  curl -X POST "${CAAS_SERVICE_BROKER_API_URL}" \
+    -H 'Authorization: Basic '${CAAS_SERVICE_BROKER_API_AUTH}'' \
+    -H 'Content-Type: application/json' \
+    -H 'Cache-Control: no-cache' \
+    -d '{"token_name":"caas_admin", "token_value":"'${CAAS_USER_TOKEN}'"}'
+echo -e "\n## SET SERVICE BROKER DB :: END"
+
+
+## SET CAAS COMMON DB
+echo "## SET CAAS COMMON DB :: BEGIN"
+  curl -X POST -u "${CAAS_COMMON_API_AUTH_ID}":"${CAAS_COMMON_API_AUTH_PWD}" -i "${CAAS_COMMON_API_URL}" \
+    -H 'Accept:application/json' \
+    -H 'Content-Type: application/json' \
+    -H 'Cache-Control: no-cache' \
+    -d '{"tokenName":"caas_admin", "tokenValue":"'${CAAS_USER_TOKEN}'"}'
+echo -e "\n## SET CAAS COMMON DB :: END"
+echo "## SET DB :: END"
+}
+
+
+## EXECUTE
+echo "## EXECUTE SET_CASS_SERVICE_SCRIPT :: BEGIN"
+
+set_credhub
+set_kubeconfig
+set_token
+set_db
+
+echo "## EXECUTE SET_CASS_SERVICE_SCRIPT :: END"
+
+echo "${CAAS_EXIT_CODE}"
+
