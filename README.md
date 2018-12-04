@@ -7,8 +7,6 @@
 - container-service-dashboard :: 1 machine
 - haproxy :: 1 machine
 - mariadb :: 1 machine
-- (Optional) private-image-repository :: 1 machine
-  - https://github.com/PaaS-TA/PRIVATE-IMAGE-REPOSITORY-RELEASE.git
 
 ## Install Guide
 - 준비 중
