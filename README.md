@@ -9,7 +9,7 @@
 - mariadb :: 1 machine
 
 ## Install Guide
-- 준비 중
+- Release Download page http://45.248.73.44/index.php/s/GHs2GFWJK52mNbK/download
 
 ## PAAS-TA-CONTAINER-SERVICE-DEPLOYMENT
 - https://github.com/PaaS-TA/PAAS-TA-CONTAINER-SERVICE-DEPLOYMENT
