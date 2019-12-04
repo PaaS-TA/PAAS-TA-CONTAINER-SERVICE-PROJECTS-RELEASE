@@ -27,6 +27,8 @@ consumes:
     type: caas-common-api
   - name: caas-service-broker-link
     type: caas-service-broker
+  - name: private-image-repository-link
+    type: private-image-repository
 
 properties:
   server.port:
@@ -42,6 +44,8 @@ properties:
     description: 'log path'
   logging.file:
     description: 'log file'
+  private.registry.url:
+    description: 'private registry url'
   cf.uaa.oauth.info.uri:
     description: 'cf uaa userinfo uri'
   cf.uaa.oauth.token.check.uri:

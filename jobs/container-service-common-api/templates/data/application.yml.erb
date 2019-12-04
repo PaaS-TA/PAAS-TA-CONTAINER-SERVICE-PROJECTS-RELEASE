@@ -11,7 +11,7 @@ spring:
     username: <%= p('authorization.id')%>
     password: <%= p('authorization.password')%>
   datasource:
-    url: jdbc:mysql://<%= link('caas-haproxy-link').p('public_ip') %>:<%= link('caas-mariadb-link').p('port') %>/caas?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Seoul&useLegacyDatetimeCode=false
+    url: jdbc:mysql://<%= link('caas-haproxy-link').instances[0].address %>:<%= link('caas-mariadb-link').p('port') %>/caas?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Seoul&useLegacyDatetimeCode=false
     username: <%= p('spring.datasource.username')%>
     password: <%= p('spring.datasource.password')%>
     validationQuery: <%= p('spring.datasource.validationQuery')%>
@@ -37,7 +37,7 @@ logging:
   file: <%= p('logging.file')%>
 
 caasApi:
-  url: http://<%= link('caas-haproxy-link').p('public_ip') %>:<%= link('caas-api-link').p('server.port') %>
+  url: http://<%= link('caas-haproxy-link').instances[0].address %>:<%= link('caas-api-link').p('server.port') %>
   authorization:
     id: <%= link('caas-api-link').p('authorization.id')%>
     password: <%= link('caas-api-link').p('authorization.password')%>

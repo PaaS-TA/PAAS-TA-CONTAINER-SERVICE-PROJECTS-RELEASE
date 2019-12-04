@@ -13,7 +13,7 @@ packages:
   - haproxy
 
 provides:
- - {name: caas-haproxy-link, type: caas-haproxy, properties: [public_ip]}
+ - {name: caas-haproxy-link, type: caas-haproxy}
 
 consumes:
   - name: caas-mariadb-link
@@ -26,6 +26,8 @@ consumes:
     type: caas-dashboard
   - name: caas-service-broker-link
     type: caas-service-broker
+  - name: caas-jenkins-broker-link
+    type: caas-jenkins-broker
 
 properties:
   pubic_ip:

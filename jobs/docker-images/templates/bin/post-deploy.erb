@@ -1,0 +1,68 @@
+#!/bin/bash
+
+set -xe
+
+
+echo "docker images load..jenkins"
+/var/vcap/packages/docker/bin/docker --host unix:///var/vcap/sys/run/docker/docker.sock load -i /var/vcap/packages/docker-images/paasta-jenkins.tar.gz
+
+echo "docker images load..registry"
+/var/vcap/packages/docker/bin/docker --host unix:///var/vcap/sys/run/docker/docker.sock load -i /var/vcap/packages/docker-images/paasta-registry.tar.gz
+
+
+jenkins_id=$(/var/vcap/packages/docker/bin/docker --host unix:///var/vcap/sys/run/docker/docker.sock images --filter=reference=<%= link('private-image-repository-link').instances[0].address %>:<%= link('private-image-repository-link').p('image_repository.port') %>/paasta_jenkins:latest --format "{{.ID}}")
+
+if [ -z "$jenkins_id" ]; then
+echo "docker images Change repositories and tags...jenkins"
+/var/vcap/packages/docker/bin/docker --host unix:///var/vcap/sys/run/docker/docker.sock tag  $(/var/vcap/packages/docker/bin/docker --host unix:///var/vcap/sys/run/docker/docker.sock images | grep paastateam/paasta_jenkins | awk '{print $3}') <%= link('private-image-repository-link').instances[0].address %>:<%= link('private-image-repository-link').p('image_repository.port') %>/paasta_jenkins:latest
+fi
+
+registry_id=$(/var/vcap/packages/docker/bin/docker --host unix:///var/vcap/sys/run/docker/docker.sock images --filter=reference=<%= link('private-image-repository-link').instances[0].address %>:<%= link('private-image-repository-link').p('image_repository.port') %>/registry:latest --format "{{.ID}}")
+
+if [ -z "$registry_id" ]; then
+    echo "docker images Change repositories and tags...registry"
+    /var/vcap/packages/docker/bin/docker --host unix:///var/vcap/sys/run/docker/docker.sock tag  $(/var/vcap/packages/docker/bin/docker --host unix:///var/vcap/sys/run/docker/docker.sock images | grep registry | awk '{print $3}')  <%= link('private-image-repository-link').instances[0].address %>:<%= link('private-image-repository-link').p('image_repository.port') %>/registry:latest
+fi
+
+
+echo "daemon.json create"
+cat > daemon.json << EOF
+{
+  "insecure-registries" : ["<%= link('private-image-repository-link').instances[0].address %>:<%= link('private-image-repository-link').p('image_repository.port') %>"]
+}
+EOF
+
+echo "daemon.json /etc/docker/daemon.json move"
+mv daemon.json /etc/docker/daemon.json
+
+echo "docker stop - waiting docker auto start"
+#monit stop docker - docker auto start
+/var/vcap/jobs/docker/bin/ctl stop
+
+i=1
+
+while [ $i -le 12 ]
+do
+  echo "Count..."$i
+
+  if [ -e "/var/vcap/sys/run/docker/docker.sock" ]; then
+  
+    echo "private docker repository login"
+    /var/vcap/packages/docker/bin/docker --host unix:///var/vcap/sys/run/docker/docker.sock login -u <%= link('private-image-repository-link').p('image_repository.auth.username') %> -p <%= p('private_image_repository_user_password') %> <%= link('private-image-repository-link').instances[0].address %>:<%= link('private-image-repository-link').p('image_repository.port') %>
+
+    echo "Register the docker image in the private docker repository...jenkins"
+    /var/vcap/packages/docker/bin/docker --host unix:///var/vcap/sys/run/docker/docker.sock push <%= link('private-image-repository-link').instances[0].address %>:<%= link('private-image-repository-link').p('image_repository.port') %>/paasta_jenkins:latest
+
+    echo "Register the docker image in the private docker repository...registry"
+    /var/vcap/packages/docker/bin/docker --host unix:///var/vcap/sys/run/docker/docker.sock push <%= link('private-image-repository-link').instances[0].address %>:<%= link('private-image-repository-link').p('image_repository.port') %>/registry:latest
+
+    echo "Success"
+    exit 0
+  fi
+
+  i=$(($i+1))
+  sleep 10
+done
+
+echo "Fail"
+exit 1

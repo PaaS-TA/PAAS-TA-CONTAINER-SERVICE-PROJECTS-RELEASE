@@ -28,6 +28,8 @@ consumes:
     type: caas-mariadb
   - name: caas-common-api-link
     type: caas-common-api
+  - name: private-image-repository-link
+    type: private-image-repository
 
 properties:
   credhub.server_url:

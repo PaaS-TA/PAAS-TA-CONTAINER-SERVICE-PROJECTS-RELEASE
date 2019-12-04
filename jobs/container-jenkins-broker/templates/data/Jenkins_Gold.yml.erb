@@ -1,0 +1,44 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins
+  #namespace: jenkins
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: master
+  template:
+    metadata:
+      labels:
+        app: master
+    spec:
+      containers:
+        - env:
+          - name: JENKINS_OPTS
+            value: "--argumentsRealm.passwd.jenkins=CHANGE_ME --argumentsRealm.roles.jenkins=admin"
+          - name: JAVA_OPTS
+            value: "-Xmx1400m"
+          image: "<%= link('private-image-repository-link').instances[0].address %>:<%= link('private-image-repository-link').p('image_repository.port') %>/paasta_jenkins:latest"
+#          image: "paastateam/paasta_jenkins:lastest"
+          name: master
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /login
+              port: 8080
+            periodSeconds: 10
+            successThreshold: 2
+            timeoutSeconds: 5
+          volumeMounts:
+            - mountPath: /var/run/docker.sock
+              name: docker-socket
+      volumes:
+        - hostPath:
+            path: /var/vcap/sys/run/docker/docker.sock
+          name: docker-socket
+
+

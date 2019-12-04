@@ -22,7 +22,7 @@ logging:
   file: <%= p('logging.file')%>
 
 commonApi:
-  url: http://<%= link('caas-haproxy-link').p('public_ip') %>:<%= link('caas-common-api-link').p('server.port') %>
+  url: http://<%= link('caas-common-api-link').instances[0].address %>:<%= link('caas-common-api-link').p('server.port') %>
   authorization:
     id: <%= link('caas-common-api-link').p('authorization.id')%>
     password: <%= link('caas-common-api-link').p('authorization.password')%>
@@ -39,6 +39,8 @@ caasMaster:
       services:
         list: "/api/v1/namespaces/{namespace}/services"
         get: "/api/v1/namespaces/{namespace}/services/{name}"
+        create: "/api/v1/namespaces/{namespace}/services"
+        delete: "/api/v1/namespaces/{namespace}/services/{name}"
       endpoints:
         list: "/api/v1/namespaces/{namespace}/endpoints"
         get: "/api/v1/namespaces/{namespace}/endpoints/{name}"
@@ -54,6 +56,9 @@ caasMaster:
       persistentvolumes:
         list: "/api/v1/persistentvolumes"
         get: "/api/v1/persistentvolumes/{name}"
+      persistentVolumeClaims:
+        list: "/api/v1/namespaces/{namespace}/persistentvolumeclaims"
+        get: "/api/v1/namespaces/{namespace}/persistentvolumeclaims/{name}"
       events:
         list: "/api/v1/namespaces/{namespace}/events"
       roles:
@@ -65,6 +70,8 @@ caasMaster:
       deployments:
         list: "/apis/apps/v1/namespaces/{namespace}/deployments"
         get: "/apis/apps/v1/namespaces/{namespace}/deployments/{name}"
+        create: "/apis/apps/v1/namespaces/{namespace}/deployments"
+        delete: "/apis/apps/v1/namespaces/{namespace}/deployments/{name}"
       roleBindings:
         list: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings"
         get: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings/{name}"
@@ -77,8 +84,11 @@ caasMaster:
         delete: "/api/v1/namespaces/{namespace}/serviceaccounts/{name}"
       namespaces:
         get: "/api/v1/namespaces/{namespace}"
+        create: "/api/v1/namespaces"
       resourceQuotas:
         list: "/api/v1/namespaces/{namespace}/resourcequotas"
       secrets:
         get: "/api/v1/namespaces/{namespace}/secrets/{name}"
+        create: "/api/v1/namespaces/{namespace}/secrets"
+
 

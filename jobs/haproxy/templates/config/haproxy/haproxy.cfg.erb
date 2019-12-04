@@ -27,10 +27,7 @@ frontend http-in-caas_dashboard
 
 backend caas_dashboard_servers
     mode http
-<% link("caas-dashboard-link").instances.map do |instance| %>
-    server server-<%= instance.index %> <%= instance.address %>:<%= link('caas-dashboard-link').p('server.port') %>
-<% end %>
-
+	server server-0 <%= link('caas-dashboard-link').instances[0].address%>:<%= link('caas-dashboard-link').p('server.port') %>
 
 ### CaaS API
 frontend http-in-caas_api
@@ -40,9 +37,7 @@ frontend http-in-caas_api
 
 backend caas_api_servers
     mode http
-<% link("caas-api-link").instances.map do |instance| %>
-    server server-<%= instance.index %> <%= instance.address %>:<%= link('caas-api-link').p('server.port') %>
-<% end %>
+	server server-0 <%= link('caas-api-link').instances[0].address%>:<%= link('caas-api-link').p('server.port') %>
 
 
 ### CaaS Common API
@@ -53,9 +48,7 @@ frontend http-in-caas_common_api
 
 backend caas_common_api_servers
     mode http
-<% link("caas-common-api-link").instances.map do |instance| %>
-    server server-<%= instance.index %> <%= instance.address %>:<%= link('caas-common-api-link').p('server.port') %>
-<% end %>
+	server server-0 <%= link('caas-common-api-link').instances[0].address%>:<%= link('caas-common-api-link').p('server.port') %>
 
 
 ### CaaS Service Broker
@@ -66,9 +59,18 @@ frontend http-in-caas_service_broker
 
 backend caas_service_broker_servers
     mode http
-<% link("caas-service-broker-link").instances.map do |instance| %>
-    server server-<%= instance.index %> <%= instance.address %>:<%= link('caas-service-broker-link').p('server.port') %>
-<% end %>
+	server server-0 <%= link('caas-service-broker-link').instances[0].address%>:<%= link('caas-service-broker-link').p('server.port') %>
+
+
+### CaaS Jenkins Broker
+frontend http-in-caas_jenkins_broker
+    mode http
+    bind *:<%= link('caas-jenkins-broker-link').p('server.port') %>
+    default_backend caas_jenkins_broker_servers
+
+backend caas_jenkins_broker_servers
+    mode http
+        server server-0 <%= link('caas-jenkins-broker-link').instances[0].address%>:<%= link('caas-jenkins-broker-link').p('server.port') %>
 
 
 ### MariaDB
@@ -79,6 +81,4 @@ frontend mariadb
 
 backend mariadb_servers
     mode tcp
-<% link("caas-mariadb-link").instances.map do |instance| %>
-    server server-<%= instance.index %> <%= instance.address %>:<%= link('caas-mariadb-link').p('port') %>
-<% end %>
+	server server-0 <%= link('caas-mariadb-link').instances[0].address%>:<%= link('caas-mariadb-link').p('port') %>

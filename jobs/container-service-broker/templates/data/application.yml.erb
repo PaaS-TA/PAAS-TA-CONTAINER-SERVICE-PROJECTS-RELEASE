@@ -6,7 +6,7 @@ spring:
     name: caas-service-broker
   datasource:
     driver-class-name: <%= p('datasource.driver_class_name')%>
-    url: jdbc:mysql://<%= link('caas-haproxy-link').p('public_ip') %>:<%= link('caas-mariadb-link').p('port') %>/broker?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Seoul&useLegacyDatetimeCode=false
+    url: jdbc:mysql://<%= link('caas-haproxy-link').instances[0].address %>:<%= link('caas-mariadb-link').p('port') %>/broker?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Seoul&useLegacyDatetimeCode=false
     username: "<%= p('datasource.username')%>"
     password: "<%= p('datasource.password')%>"
   jpa:
@@ -22,7 +22,7 @@ caas:
     command: <%= p('caas.init_command')%>
     exit-code: <%= p('caas.exit_code')%>
   common:
-    url: http://<%= link('caas-haproxy-link').p('public_ip') %>:<%= link('caas-common-api-link').p('server.port') %>
+    url: http://<%= link('caas-haproxy-link').instances[0].address %>:<%= link('caas-common-api-link').p('server.port') %>
     id: <%= link('caas-common-api-link').p('authorization.id')%>
     password: <%= link('caas-common-api-link').p('authorization.password')%>
 roleSet:
@@ -77,3 +77,13 @@ auth:
   id: "<%= p('auth.id')%>"
   password: "<%= p('auth.password')%>"
 
+private:
+  docker:
+    registry:
+      auth:
+        id: <%= link('private-image-repository-link').p('image_repository.auth.username') %>
+        password: cloudfoundry
+      uri: <%= link('private-image-repository-link').instances[0].address %>
+      port: <%= link('private-image-repository-link').p('image_repository.port') %>
+      secret:
+        name: paasta

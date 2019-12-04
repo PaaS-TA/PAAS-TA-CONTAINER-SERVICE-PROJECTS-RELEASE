@@ -1,0 +1,50 @@
+#!/bin/bash
+set -e
+
+PKG_NAME=private-image-repository
+PKG_DIR=/var/vcap/packages/${PKG_NAME}
+PKG_BIN=/usr/bin/docker-registry
+
+########## START INSTALL PACKAGE ##########
+NEED_PKGS=(
+  "libnih-dbus1_1.0.3-4.3ubuntu1_amd64.deb"
+  "libcgmanager0_0.39-2ubuntu5_amd64.deb"
+  "libsystemd-login0_204-5ubuntu20.28_amd64.deb"
+  "libdrm2_2.4.67-1_amd64.deb"
+  "libplymouth4_0.9.2-3ubuntu13_amd64.deb"
+  "plymouth_0.9.2-3ubuntu13_amd64.deb"
+  "mountall_2.54ubuntu1_amd64.deb"
+  "upstart_1.13.2-0ubuntu21_amd64.deb"
+  "libdbus-1-3_1.10.6-1ubuntu3_amd64.deb"
+  "dbus_1.10.6-1ubuntu3_amd64.deb"
+  "lsb-base_4.1+Debian11ubuntu7_all.deb"
+  "docker-registry_2.3.0_ds1-1_amd64.deb"
+)
+
+# TRY TO INSTALL PACKAGES
+echo ">>> Install packages : libsystemd, dbus, upstart, lsb-base, private-image-repository."
+for PKG in "${NEED_PKGS[@]}"; do
+  sudo dpkg -iE ${PKG_DIR}/${PKG} 1>&2
+done
+
+# CHECK INSTALL
+[[ ! -f "${PKG_BIN}" ]] && echo ">>> Fail to install private-image-repository" 1>&2 && exit 1;
+
+# DISABLE STARTUP OF SERVICE ON BOOTING
+echo ">>> Disable startup service for docker-registry."
+sudo update-rc.d docker-registry disable
+echo manual | sudo tee /etc/init/docker-registry.override
+
+echo ">>> Correct wrong configuration in default config file of private-image-repository."
+sudo sed -i 's|^start on local-filesystems|#start on local-filesystems|g' /etc/init/docker-registry.conf
+sudo sed -i 's|/etc/etc/docker/registry/config.yml|/etc/docker/registry/config.yml|g' /etc/init/docker-registry.conf
+
+# ENABLE TO USE PORT NUMBER LESS THAN 1024
+echo ">>> Enable CAP_NET_BIND_SERVICE for private-image-repository."
+sudo setcap 'cap_net_bind_service=+eip' ${PKG_BIN}
+
+########### END INSTALL PACKAGE ###########
+
+echo ">>> Successfully done to install private-image-repository and dependencies."
+
+#EOF

@@ -1,0 +1,7 @@
+---
+name: container-jenkins-broker
+
+dependencies: []
+
+files:
+- container-jenkins-broker/paas-ta-caas-jenkins-broker.jar

@@ -1,0 +1,31 @@
+---
+name: docker-repository-setting
+templates:
+  bin/post-deploy.erb: bin/post-deploy
+packages:
+  - docker-repository-setting
+
+consumes:
+  - name: caas-haproxy-link
+    type: caas-haproxy
+  - name: caas-mariadb-link
+    type: caas-mariadb
+  - name: caas-api-link
+    type: caas-api
+  - name: caas-common-api-link
+    type: caas-common-api
+  - name: private-image-repository-link
+    type: private-image-repository
+
+
+properties:
+  private-repository-url:
+    description: "Docker Private repository url"
+  private_image_repository_user_name:
+    description: "Docker Private repository ID"
+    default: "admin"
+  private_image_repository_user_password:
+    description: "Docker Private repository PASSWORD"
+    default: "cloudfoundry"
+  caas_master_public_url:
+    description: "master ip"

@@ -1,0 +1,46 @@
+---
+name: private-image-repository
+templates:
+  conf/config.yml: conf/config.yml
+  conf/htpasswd: conf/htpasswd
+  bin/monit_debugger: bin/monit_debugger
+  bin/private-image-repository-ctl.erb: bin/private-image-repository-ctl
+  helpers/ctl_setup.sh: helpers/ctl_setup.sh
+  helpers/ctl_utils.sh: helpers/ctl_utils.sh
+  bin/pre-start : bin/pre-start
+  bin/install-pkgs: bin/install-pkgs
+
+packages:
+  - private-image-repository
+
+provides:
+ - name: private-image-repository-link
+   type: private-image-repository
+   properties:
+   - image_repository.port
+   - image_repository.auth.username
+   - image_repository.auth.password
+
+
+properties:
+  image_repository.port:
+    description: 'Image repository server port'
+    default: 5000
+  image_repository.storage.filesystem.rootdirectory:
+    description: 'Image store directory of Image repository'
+    default: /var/lib/docker-registry
+  image_repository.storage.delete_enabled:
+    description: 'If true, image repository allows deleting image to use REST API.'
+    default: true
+  image_repository.http.http2_disabled:
+    description: 'If true, image repository does not use http2 transmission.'
+    default: false
+  image_repository.auth.enabled:
+    description: 'If true, image repository use basic authentication.'
+    default: true
+  image_repository.auth.username:
+    description: 'Authentication Username'
+    default: admin
+  image_repository.auth.password:
+    description: 'Authentication Password (Bcrypt algorithm)'
+    default: "2y$05$4l7G8WyToNODwYwjHyXDnu5aB3wvKuIeipgoF.CUuGLzsaZkUEsxS"

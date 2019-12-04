@@ -1,0 +1,90 @@
+#!/bin/bash
+
+set -e
+
+PKG_NAME=private-image-repository
+JOB_NAME=private-image-repository
+
+JOB_DIR=/var/vcap/jobs/${JOB_NAME}
+STORE_DIR=/var/vcap/store/${JOB_NAME}
+BASE_DIR=/etc/docker/registry
+
+PID_FILE=/var/vcap/sys/run/${JOB_NAME}.pid
+
+IMAGE_STORE_DIR=<%= p('image_repository.storage.filesystem.rootdirectory') %>
+WARNING_DIRS=( "/etc" "/usr" "/bin" "/sbin" )
+
+echo "Start pre-start for ${JOB_NAME}"
+
+# Stop monit temporarily using PID FILE
+echo "1" > ${PID_FILE}
+
+#####################################
+##### CHECK TO INSTALL PACKAGES #####
+# IF THEY DON'T EXISTS, THEY INSTALL.
+RET="`dpkg -l | grep docker-registry; echo $?`"
+if [[ "${RET}" != "0" ]]; then
+  sudo chmod +x ${JOB_DIR}/bin/install-pkgs
+  ${JOB_DIR}/bin/install-pkgs
+fi
+#####################################
+
+# CHANGE PREMISSION, OWNER AND ADD USER INTO docker-registry GROUP
+echo ">> pre-start : CHANGE PREMISSION, OWNER"
+sudo chmod 777 /tmp
+sudo usermod -aG docker-registry,syslog vcap
+sudo chown -R vcap:vcap /var/vcap/sys/log
+if [ ! -f "/var/vcap/sys/log/${JOB_NAME}/private-image-repository.log" ]; then
+  sudo chown -R root:syslog /var/log/upstart
+  ln -s /var/log/upstart/docker-registry.log /var/vcap/sys/log/${JOB_NAME}/private-image-repository.log
+fi
+
+# COPY CONFIG FILE (from ${JOB_DIR}/conf/* to ${STORE_DIR}, CHANGE OWNER
+echo ">> pre-start : COPY CONFIG FILE"
+sudo mkdir -p ${STORE_DIR}
+sudo cp ${JOB_DIR}/conf/* ${STORE_DIR}
+sudo chmod +r ${STORE_DIR}/*
+echo
+
+# CONFIG FILE #1 : COPY BACKUP ORIGINAL CONFIG
+echo ">> pre-start : SET CONFIG FILE#1"
+if [ -d ${BASE_DIR}/.origin ]; then
+  sudo mkdir -p ${BASE_DIR}/.origin
+  sudo mv ${BASE_DIR}/* ${BASE_DIR}/.origin
+fi
+
+# CONFIG FILE #2 : CREATE LINK
+echo ">> pre-start : SET CONFIG FILE#2"
+sudo rm -f ${BASE_DIR}/*
+sudo ln -s ${STORE_DIR}/* ${BASE_DIR}
+
+# CONFIG FILE #3 : CHANGE OWNER TO vcap USER
+echo ">> pre-start : SET CONFIG FILE#3"
+sudo chown -R vcap:vcap ${BASE_DIR}
+sudo chown -R vcap:vcap ${STORE_DIR}
+
+# MAKE IMAGE STORE DIRECTORY
+WARNING_DIRS=( "/" "/etc" "/usr" "/bin" "/sbin" )
+DO_OWNER=""
+echo ">> CURRENT IMAGE STORE DIRECTORY : ${IMAGE_STORE_DIR}"
+for WARN_DIR in ${WARNING_DIRS[@]}; do
+  if [ "$WARN_DIR" == "$IMAGE_STORE_DIR" ]; then
+    echo ">> WARNING! THIS DIRECTORY IS NOT SUITABLE FOR IMAGE STORAGE DIRECTORIES."
+    DO_OWNER="0"
+  fi
+done
+if [ "x${DO_OWNER}" == "x" ]; then
+  DO_OWNER="1"
+fi
+echo "Create private-image-repository store directory : ${IMAGE_STORE_DIR}"
+mkdir -p ${IMAGE_STORE_DIR}
+if [ "${DO_OWNER}" == "1" ]; then
+  sudo chown docker-registry:docker-registry ${IMAGE_STORE_DIR}
+fi
+
+# Remove temporarily PID FILE
+rm -f ${PID_FILE}
+
+echo "Done pre-start for ${JOB_NAME}."
+
+#EOF

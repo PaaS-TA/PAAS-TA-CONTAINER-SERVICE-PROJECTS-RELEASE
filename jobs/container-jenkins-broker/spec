@@ -1,0 +1,93 @@
+---
+name: container-jenkins-broker
+templates:
+  bin/service_ctl.erb: bin/service_ctl
+  bin/monit_debugger: bin/monit_debugger
+  data/properties.sh: data/properties.sh
+  data/application.yml.erb: data/application.yml
+  helpers/ctl_setup.sh: helpers/ctl_setup.sh
+  helpers/ctl_utils.sh: helpers/ctl_utils.sh
+  data/Jenkins_Gold.yml.erb: data/Jenkins_Gold.yml
+  data/Jenkins_Service.yml.erb: data/Jenkins_Service.yml
+  data/create-namespace.yml.erb: data/create-namespace.yml
+  data/docker-secret.yml.erb: data/docker-secret.yml
+
+packages:
+  - java
+  - container-jenkins-broker
+
+provides:
+ - name: caas-jenkins-broker-link
+   type: caas-jenkins-broker
+   properties: 
+   - server.port
+
+consumes:
+  - name: caas-haproxy-link
+    type: caas-haproxy
+  - name: caas-mariadb-link
+    type: caas-mariadb
+  - name: caas-api-link
+    type: caas-api
+  - name: caas-common-api-link
+    type: caas-common-api
+  - name: private-image-repository-link
+    type: private-image-repository
+
+properties:
+  jenkins.password:
+    default: 'cloudfoundry'
+    description: 'docker repo password'
+  jenkins.namespace_file_path:
+    description: 'jenkins namespace file path'
+  jenkins.secret_file_path:
+    description: 'jenkins secret file path'
+  jenkins.namespace:
+    description: 'jenkins namespace'
+  jenkins.service_file_path:
+    description: 'jenkins service_file_path'
+    default: "/var/vcap/jobs/container-jenkins-broker/data/Jenkins_Service.yml"
+  jenkins.deployment_file_path:
+    description: 'jenkins deployment_file_path'
+    default: "/var/vcap/jobs/container-jenkins-broker/data/Jenkins_Gold.yml"
+  jenkins.serviceDefinition.plan1.type:
+    description: 'jenkins serviceDefinition plan1 type'
+  jenkins.serviceDefinition.plan1.desc:
+    description: 'jenkins serviceDefinition plan1 desc'
+  jenkins.serviceDefinition.plan1.name:
+    description: 'jenkins serviceDefinition plan1 name'
+  jenkins.serviceDefinition.plan1.id:
+    description: 'jenkins serviceDefinition plan1 id'
+  jenkins.serviceDefinition.bullet.desc:
+    description: 'jenkins serviceDefinition bullet desc'
+  jenkins.serviceDefinition.bullet.name:
+    description: 'jenkins serviceDefinition bullet name'
+  jenkins.serviceDefinition.desc:
+    description: 'jenkins serviceDefinition desc'
+  jenkins.serviceDefinition.name:
+    description: 'jenkins serviceDefinition name'
+  jenkins.serviceDefinition.id:
+    description: 'jenkins serviceDefinition id'
+  jpa.show_sql:
+    description: 'jpa show sql'
+  jpa.hibernate_ddl_auto:
+    description: 'jpa hibernate ddl auto'
+  datasource.password:
+    description: 'datasource password'
+  datasource.username:
+    description: 'datasource username'
+  caas.master_ip:
+    description: 'caas public master ip'
+  server.port:
+    description: 'server port'
+  management.security.enabled:
+    description: 'management security enabled'
+  logging.level.ROOT:
+    description: 'log level'
+  logging.path:
+    description: 'log path'
+  logging.file:
+    description: 'log file'
+  java_opts:
+    description: 'java option memory setting'
+    default: '-XX:MaxMetaspaceSize=104857K -Xss349K -Xms681574K -XX:MetaspaceSize=104857K -Xmx681574K'

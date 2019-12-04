@@ -1,0 +1,5 @@
+check process container-jenkins-broker
+  with pidfile /var/vcap/sys/run/container-jenkins-broker/container-jenkins-broker.pid
+  start program "/var/vcap/jobs/container-jenkins-broker/bin/monit_debugger service_ctl '/var/vcap/jobs/container-jenkins-broker/bin/service_ctl start'" with timeout 20 seconds
+  stop program "/var/vcap/jobs/container-jenkins-broker/bin/monit_debugger service_ctl '/var/vcap/jobs/container-jenkins-broker/bin/service_ctl stop'" with timeout 20 seconds
+  group vcap

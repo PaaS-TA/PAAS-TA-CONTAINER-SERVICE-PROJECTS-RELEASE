@@ -1,0 +1,34 @@
+version: 0.1
+log:
+  fields:
+    service: registry
+storage:
+    cache:
+        blobdescriptor: inmemory
+    filesystem:
+        rootdirectory: <%= p('image_repository.storage.filesystem.rootdirectory') %>
+    delete:
+        # Allows deleting images in registry
+        enabled: <%= p('image_repository.storage.delete_enabled') %>
+<% if p('image_repository.auth.enabled') == true %>
+auth:
+    htpasswd:
+        # Basic Authentication
+        realm: basic-realm
+        path: /etc/docker/registry/htpasswd
+<% else %>
+
+<% end %>
+http:
+    addr: :<%= p('image_repository.port') %>
+    headers:
+        X-Content-Type-Options: [nosniff]
+    http2:
+        disabled: <%= p('image_repository.http.http2_disabled') %>
+health:
+  storagedriver:
+    enabled: true
+    interval: 10s
+    threshold: 3
+
+# EOF

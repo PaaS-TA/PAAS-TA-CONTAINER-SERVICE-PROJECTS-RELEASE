@@ -1,0 +1,47 @@
+#!/bin/bash
+
+set -xe
+echo "daemon.json create"
+cat > daemon.json << EOF
+{
+"insecure-registries" : 
+ [
+   "<%= link('private-image-repository-link').instances[0].address %>:<%= link('private-image-repository-link').p('image_repository.port') %>",
+<%  
+i=0	 
+port_count=3000
+while i < port_count
+ port = 30000
+ port = port+i
+
+ if i < (port_count-1)
+%>
+   "<%=p('caas_master_public_url')%>:<%=port%>",
+<% 
+ else
+%>
+   "<%=p('caas_master_public_url')%>:<%=port%>"
+<%
+ end
+
+ i += 1
+
+end
+ %>
+     
+ ]
+}
+EOF
+
+echo "daemon.json /etc/docker/daemon.json move"
+mv daemon.json /etc/docker/daemon.json
+
+
+echo "docker service stop"
+#monit stop docker
+/var/vcap/jobs/docker/bin/ctl stop
+
+sleep 10
+echo "success - waiting docker auto start"
+
+exit 0

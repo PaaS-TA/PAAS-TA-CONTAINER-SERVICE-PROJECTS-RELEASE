@@ -29,6 +29,17 @@ CREATE TABLE `admin_token` (
   PRIMARY KEY (`token_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
+-- ----------------------------
+-- Table structure for jenkins_instance
+-- ----------------------------
+DROP TABLE IF EXISTS `jenkins_instance`;
+CREATE TABLE `jenkins_instance`  (
+  `organization_guid` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
+  `name_space` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
+  `service_instance_id` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`service_instance_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Compact;
+
 /*Table structure for table `service_instances` */
 
 DROP TABLE IF EXISTS `service_instance`;

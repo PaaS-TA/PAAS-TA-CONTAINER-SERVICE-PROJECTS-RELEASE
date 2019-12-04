@@ -1,0 +1,68 @@
+#!/bin/bash
+
+#BASE_DIR=/etc/docker/registry
+JOB_NAME=private-image-repository
+SERVICE_NAME=docker-registry
+PID_FILE="/var/vcap/sys/run/${JOB_NAME}.pid"
+LOG_FILE="/var/vcap/sys/log/${JOB_NAME}/private-image-repository.log"
+#source /var/vcap/jobs/$JOB_NAME/helpers/ctl_setup.sh $JOB_NAME
+
+
+get_pid () {
+  echo "`ps -ef | grep -v grep | grep $1 | awk '{print $2}'`"
+}
+
+stop_service () {
+  echo "Stop image repository"
+
+  sudo service $SERVICE_NAME stop
+  PID="`get_pid ${SERVICE_NAME}`"
+  if [ "x$PID" != "x" ]; then
+    sudo kill -9 $PID
+  fi
+
+  echo "Stop time : `date`"
+
+  RETVAL=$?
+
+  [[ $RETVAL -ne 0 ]] && sudo kill $(cat $PID_FILE)
+}
+
+start_service () {
+  echo "Start image repository"
+
+  sudo service $SERVICE_NAME start
+
+  RETVAL=$?
+
+  [[ $RETVAL -ne 0 ]] && exit $RETVAL
+
+  # CATCH PID OF private-image-repository
+  PID="`get_pid ${SERVICE_NAME}`"
+  echo "${PID}" > ${PID_FILE}
+  echo "Current PID of job : ${PID}"
+  echo "Start time : `date`"
+}
+
+# MAIN
+
+echo "-----------------------------------" >> ${LOG_FILE}
+
+case $1 in
+
+  start)
+    start_service >> ${LOG_FILE}
+    ;;
+
+  stop)
+    stop_service >> ${LOG_FILE}
+    ;;
+
+  *)
+    echo "Usage: private-image-repository-ctl {start |  stop | restart}"
+    exit 63
+    ;;
+
+esac
+
+#EOF

@@ -18,13 +18,13 @@ logging:
   file: <%= p('logging.file')%>
 
 commonApi:
-  url: http://<%= link('caas-haproxy-link').p('public_ip') %>:<%= link('caas-common-api-link').p('server.port') %>
+  url: http://<%= link('caas-haproxy-link').instances[0].address %>:<%= link('caas-common-api-link').p('server.port') %>
   authorization:
     id: <%= link('caas-common-api-link').p('authorization.id')%>
     password: <%= link('caas-common-api-link').p('authorization.password')%>
 
 caasApi:
-  url: http://<%= link('caas-haproxy-link').p('public_ip') %>:<%= link('caas-api-link').p('server.port') %>
+  url: http://<%= link('caas-haproxy-link').instances[0].address %>:<%= link('caas-api-link').p('server.port') %>
   authorization:
     id: <%= link('caas-api-link').p('authorization.id')%>
     password: <%= link('caas-api-link').p('authorization.password')%>
@@ -40,6 +40,11 @@ roleSet:
   administratorName: <%= link('caas-mariadb-link').p('role_set.administrator_code_name') %>
   regularUserName: <%= link('caas-mariadb-link').p('role_set.regular_user_code_name') %>
   initUserName: <%= link('caas-mariadb-link').p('role_set.init_user_code_name') %>
+
+private:
+  registry:
+    imageName: <%= link('private-image-repository-link').instances[0].address %>:<%= link('private-image-repository-link').p('image_repository.port') %>/registry:latest
+    url: <%= p('private.registry.url')%>
 
 cf:
   uaa:

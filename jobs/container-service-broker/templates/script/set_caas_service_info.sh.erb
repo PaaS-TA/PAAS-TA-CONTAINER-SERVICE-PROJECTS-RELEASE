@@ -12,10 +12,10 @@ export CREDHUB_SERVER_URL='<%= p('credhub.server_url')%>'
 export CREDHUB_ADMIN_CLIENT_SECRET='<%= p('credhub.admin_client_secret')%>'
 export CAAS_CLUSTER='<%= p('caas.cluster_name')%>'
 export CAAS_APISERVER='<%= p('caas.api_server_url')%>'
-export CAAS_COMMON_API_URL="http://<%= link('caas-haproxy-link').p('public_ip') %>:<%= link('caas-common-api-link').p('server.port') %>/adminToken"
+export CAAS_COMMON_API_URL="http://<%= link('caas-haproxy-link').instances[0].address %>:<%= link('caas-common-api-link').p('server.port') %>/adminToken"
 export CAAS_COMMON_API_AUTH_ID='<%= link('caas-common-api-link').p('authorization.id')%>'
 export CAAS_COMMON_API_AUTH_PWD='<%= link('caas-common-api-link').p('authorization.password')%>'
-export CAAS_SERVICE_BROKER_API_URL="http://<%= link('caas-haproxy-link').p('public_ip') %>:<%= p('server.port') %>/tokens"
+export CAAS_SERVICE_BROKER_API_URL="http://<%= link('caas-haproxy-link').instances[0].address %>:<%= p('server.port') %>/tokens"
 export CAAS_SERVICE_BROKER_API_AUTH='<%= p('caas.service_broker_auth_secret')%>'
 export CAAS_EXIT_CODE='<%= p('caas.exit_code')%>'
 
@@ -95,6 +95,10 @@ echo "## SET DB :: END"
 
 ## EXECUTE
 echo "## EXECUTE SET_CASS_SERVICE_SCRIPT :: BEGIN"
+
+sudo chmod 777 ${PKG_DIR}/bosh
+sudo chmod 777 ${PKG_DIR}/credhub
+sudo chmod 777 ${PKG_DIR}/kubectl
 
 set_credhub
 set_kubeconfig

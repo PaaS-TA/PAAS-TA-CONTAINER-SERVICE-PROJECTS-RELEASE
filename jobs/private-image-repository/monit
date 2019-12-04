@@ -1,0 +1,5 @@
+check process private-image-repository
+  with pidfile /var/vcap/sys/run/private-image-repository.pid
+  start program "/var/vcap/jobs/private-image-repository/bin/private-image-repository-ctl start" with timeout 30 seconds
+  stop program "/var/vcap/jobs/private-image-repository/bin/private-image-repository-ctl stop" with timeout 30 seconds
+  group vcap
