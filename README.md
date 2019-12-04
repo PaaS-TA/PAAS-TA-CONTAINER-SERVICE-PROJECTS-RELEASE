@@ -11,7 +11,7 @@
 - container-jenkins-broker :: 1 manchne
 
 ## Install Guide
-- Release Download page http://45.248.73.44/remote.php/webdav/package/5.0/release/service/private-image-repository-release-1.0.tgz
+- https://github.com/PaaS-TA/Guide-5.0-Ravioli/blob/master/service-guide/tools/PAAS-TA_CONTAINER_SERVICE_INSTALL_GUIDE_V2.0.md
 
 ## PAAS-TA-CONTAINER-SERVICE-DEPLOYMENT
 - https://github.com/PaaS-TA/PAAS-TA-CONTAINER-SERVICE-DEPLOYMENT
