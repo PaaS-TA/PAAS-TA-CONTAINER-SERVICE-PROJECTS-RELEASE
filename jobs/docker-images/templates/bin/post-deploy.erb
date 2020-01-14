@@ -2,6 +2,14 @@
 
 set -xe
 
+jenkins_image_name="paasta_jenkins"
+
+return_value=$(curl -X GET http://<%= link('private-image-repository-link').instances[0].address %>:<%= link('private-image-repository-link').p('image_repository.port') %>/v2/_catalog)
+
+if [[ "$return_value" == *"$jenkins_image_name"* ]]; then
+  echo "PaaS-TA jenkins docker image already exist."
+  exit 0
+fi
 
 echo "docker images load..jenkins"
 /var/vcap/packages/docker/bin/docker --host unix:///var/vcap/sys/run/docker/docker.sock load -i /var/vcap/packages/docker-images/paasta-jenkins.tar.gz
