@@ -2,11 +2,6 @@
 
 set -xe
 
-if [ -e /etc/docker/daemon.json ]; then
-  echo "daemon.json is already exist..."
-  exit 0
-fi
-
 echo "daemon.json create"
 cat > daemon.json << EOF
 {

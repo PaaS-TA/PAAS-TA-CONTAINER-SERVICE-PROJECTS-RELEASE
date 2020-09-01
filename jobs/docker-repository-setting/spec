@@ -19,13 +19,5 @@ consumes:
 
 
 properties:
-  private-repository-url:
-    description: "Docker Private repository url"
-  private_image_repository_user_name:
-    description: "Docker Private repository ID"
-    default: "admin"
-  private_image_repository_user_password:
-    description: "Docker Private repository PASSWORD"
-    default: "cloudfoundry"
   caas_master_public_url:
     description: "master ip"

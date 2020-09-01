@@ -20,6 +20,7 @@ provides:
    - image_repository.port
    - image_repository.auth.username
    - image_repository.auth.password
+   - image_repository.auth.password_string
 
 
 properties:
@@ -43,4 +44,7 @@ properties:
     default: admin
   image_repository.auth.password:
     description: 'Authentication Password (Bcrypt algorithm)'
-    default: "2y$05$4l7G8WyToNODwYwjHyXDnu5aB3wvKuIeipgoF.CUuGLzsaZkUEsxS"
+    default: "$2y$10$hJ/2/CqZ/dihdCbylXRuheo3wgepMxRqqNJ4hLmCHHS.SnRFMilWC"
+  image_repository.auth.password_string:
+    description: 'Authentication Password (string)'
+    default: "admin"

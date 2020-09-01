@@ -36,6 +36,9 @@ spec:
           volumeMounts:
             - mountPath: /var/run/docker.sock
               name: docker-socket
+      imagePullSecrets:
+        - name: <%= p('jenkins.secret_name')%>
+
       volumes:
         - hostPath:
             path: /var/vcap/sys/run/docker/docker.sock

@@ -2,15 +2,6 @@
 
 set -xe
 
-jenkins_image_name="paasta_jenkins"
-
-return_value=$(curl -X GET http://<%= link('private-image-repository-link').instances[0].address %>:<%= link('private-image-repository-link').p('image_repository.port') %>/v2/_catalog)
-
-if [[ "$return_value" == *"$jenkins_image_name"* ]]; then
-  echo "PaaS-TA jenkins docker image already exist."
-  exit 0
-fi
-
 echo "docker images load..jenkins"
 /var/vcap/packages/docker/bin/docker --host unix:///var/vcap/sys/run/docker/docker.sock load -i /var/vcap/packages/docker-images/paasta-jenkins.tar.gz
 
@@ -56,7 +47,7 @@ do
   if [ -e "/var/vcap/sys/run/docker/docker.sock" ]; then
   
     echo "private docker repository login"
-    /var/vcap/packages/docker/bin/docker --host unix:///var/vcap/sys/run/docker/docker.sock login -u <%= link('private-image-repository-link').p('image_repository.auth.username') %> -p <%= p('private_image_repository_user_password') %> <%= link('private-image-repository-link').instances[0].address %>:<%= link('private-image-repository-link').p('image_repository.port') %>
+    /var/vcap/packages/docker/bin/docker --host unix:///var/vcap/sys/run/docker/docker.sock login -u <%= link('private-image-repository-link').p('image_repository.auth.username') %> -p <%= link('private-image-repository-link').p('image_repository.auth.password_string') %> <%= link('private-image-repository-link').instances[0].address %>:<%= link('private-image-repository-link').p('image_repository.port') %>
 
     echo "Register the docker image in the private docker repository...jenkins"
     /var/vcap/packages/docker/bin/docker --host unix:///var/vcap/sys/run/docker/docker.sock push <%= link('private-image-repository-link').instances[0].address %>:<%= link('private-image-repository-link').p('image_repository.port') %>/paasta_jenkins:latest

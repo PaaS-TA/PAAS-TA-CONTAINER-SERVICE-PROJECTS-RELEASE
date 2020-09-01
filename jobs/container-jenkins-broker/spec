@@ -40,6 +40,9 @@ properties:
     description: 'docker repo password'
   jenkins.namespace_file_path:
     description: 'jenkins namespace file path'
+  jenkins.secret_name:
+    description: 'jenkins secret name'
+    default: 'paasta'
   jenkins.secret_file_path:
     description: 'jenkins secret file path'
   jenkins.namespace:
