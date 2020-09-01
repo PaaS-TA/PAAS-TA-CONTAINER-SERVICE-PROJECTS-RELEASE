@@ -1,10 +1,10 @@
 ## PAAS-TA-CONTAINER-SERVICE-PROJECTS-RELEASE   
 
 ### Notices   
-- Use PAAS-TA-CONTAINER-SERVICE-PROJECTS-RELEASE >= v.5.0.2    
+- Use PAAS-TA-CONTAINER-SERVICE-PROJECTS-RELEASE >= v.2.0.1    
   - PaaS-TA >= v.5.0.2    
   - service-deployment >= v5.0.2    
-- Use PAAS-TA-CONTAINER-SERVICE-PROJECTS-RELEASE =< v.5.0.1     
+- Use PAAS-TA-CONTAINER-SERVICE-PROJECTS-RELEASE =< v.2.0.0     
   - PaaS-TA =< v.5.0.1    
   - service-deployment =< v5.0.1    
 
